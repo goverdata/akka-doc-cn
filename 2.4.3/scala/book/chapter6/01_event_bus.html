@@ -1,0 +1,1748 @@
+<!DOCTYPE HTML>
+<html lang="en-US" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <title>事件总线 | AKKA 2.3.6 Scala 文档</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 1.0.3">
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+        
+    
+    
+    
+    <link rel="next" href="../chapter6/02_logging.html" />
+    
+    
+    <link rel="prev" href="../chapter6/utilities.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+<link rel="stylesheet" href="../gitbook/style.css">
+
+
+        
+    <div class="book"  data-level="6.1" data-basepath=".." data-revision="1429064719816">
+    
+
+<div class="book-summary">
+    <div class="book-search">
+        <input type="text" placeholder="Type to search" class="form-control" />
+    </div>
+    <ul class="summary">
+        
+    	
+    	
+    	
+
+        
+
+        
+    
+        
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="../index.html">
+                        <i class="fa fa-check"></i>
+                        
+                         Introduction
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="1" data-path="chapter1/introduction.html">
+            
+                
+                    <a href="../chapter1/introduction.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                         引言
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="1.1" data-path="chapter1/01_what_is_akka.html">
+            
+                
+                    <a href="../chapter1/01_what_is_akka.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.1.</b>
+                        
+                         Akka是什么?
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="1.2" data-path="chapter1/02_why_akka.html">
+            
+                
+                    <a href="../chapter1/02_why_akka.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.2.</b>
+                        
+                         为什么使用Akka?
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="1.3" data-path="chapter1/03_getting_started.html">
+            
+                
+                    <a href="../chapter1/03_getting_started.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.3.</b>
+                        
+                         入门
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="1.4" data-path="chapter1/04_the_obligatory_hello_world.html">
+            
+                
+                    <a href="../chapter1/04_the_obligatory_hello_world.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.4.</b>
+                        
+                         必修的“Hello World”
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="1.5" data-path="chapter1/05_usecase_and_deployment_scenarios.html">
+            
+                
+                    <a href="../chapter1/05_usecase_and_deployment_scenarios.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.5.</b>
+                        
+                         用例和部署场景
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="1.6" data-path="chapter1/06_examples_of_usecases_for_akka.html">
+            
+                
+                    <a href="../chapter1/06_examples_of_usecases_for_akka.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.6.</b>
+                        
+                         Akka使用实例
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="2" data-path="chapter2/general.html">
+            
+                
+                    <a href="../chapter2/general.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                         概述
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="2.1" data-path="chapter2/01_terminology_concepts.html">
+            
+                
+                    <a href="../chapter2/01_terminology_concepts.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                         术语，概念
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="2.2" data-path="chapter2/02_actor_systems.html">
+            
+                
+                    <a href="../chapter2/02_actor_systems.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                         Actor系统
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="2.3" data-path="chapter2/03_what_is_an_actor.html">
+            
+                
+                    <a href="../chapter2/03_what_is_an_actor.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                         什么是Actor?
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="2.4" data-path="chapter2/04_supervision_and_monitoring.html">
+            
+                
+                    <a href="../chapter2/04_supervision_and_monitoring.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                         监管与监控
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="2.5" data-path="chapter2/05_actor_references_paths_and_addresses.html">
+            
+                
+                    <a href="../chapter2/05_actor_references_paths_and_addresses.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.5.</b>
+                        
+                         Actor引用, 路径与地址
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="2.6" data-path="chapter2/06_location_transparency.html">
+            
+                
+                    <a href="../chapter2/06_location_transparency.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.6.</b>
+                        
+                         位置透明性
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="2.7" data-path="chapter2/07_akka_and_the_java_memory_model.html">
+            
+                
+                    <a href="../chapter2/07_akka_and_the_java_memory_model.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.7.</b>
+                        
+                         Akka与Java内存模型
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="2.8" data-path="chapter2/08_message_delivery_reliability.html">
+            
+                
+                    <a href="../chapter2/08_message_delivery_reliability.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.8.</b>
+                        
+                         消息发送语义
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="2.9" data-path="chapter2/09_configuration.html">
+            
+                
+                    <a href="../chapter2/09_configuration.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.9.</b>
+                        
+                         配置
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3" data-path="chapter3/actors.html">
+            
+                
+                    <a href="../chapter3/actors.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                         Actors
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="3.1" data-path="chapter3/01_actors.html">
+            
+                
+                    <a href="../chapter3/01_actors.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                         Actors
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3.2" data-path="chapter3/02_typed_actors.html">
+            
+                
+                    <a href="../chapter3/02_typed_actors.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.</b>
+                        
+                         有类型Actor
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3.3" data-path="chapter3/03_fault_tolerance.html">
+            
+                
+                    <a href="../chapter3/03_fault_tolerance.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.3.</b>
+                        
+                         容错
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="3.3.1" data-path="chapter3/03-1_fault_tolerance_sample.html">
+            
+                
+                    <a href="../chapter3/03-1_fault_tolerance_sample.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.3.1.</b>
+                        
+                         容错示例
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3.4" data-path="chapter3/04_dispatchers.html">
+            
+                
+                    <a href="../chapter3/04_dispatchers.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.4.</b>
+                        
+                         调度器
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3.5" data-path="chapter3/05_mailboxes.html">
+            
+                
+                    <a href="../chapter3/05_mailboxes.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.5.</b>
+                        
+                         邮箱
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3.6" data-path="chapter3/06_routing.html">
+            
+                
+                    <a href="../chapter3/06_routing.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.6.</b>
+                        
+                         路由
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3.7" data-path="chapter3/07_fsm.html">
+            
+                
+                    <a href="../chapter3/07_fsm.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.7.</b>
+                        
+                         有限状态机(FSM)
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3.8" data-path="chapter3/08_persistence.html">
+            
+                
+                    <a href="../chapter3/08_persistence.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.8.</b>
+                        
+                         持久化
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3.9" data-path="chapter3/09_testing_actor_systems.html">
+            
+                
+                    <a href="../chapter3/09_testing_actor_systems.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.9.</b>
+                        
+                         测试Actor系统
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="3.9.1" data-path="chapter3/09_1_testkit-example.html">
+            
+                
+                    <a href="../chapter3/09_1_testkit-example.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.9.1.</b>
+                        
+                         TestKit实例
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="3.10" data-path="chapter3/10_actor_dsl.html">
+            
+                
+                    <a href="../chapter3/10_actor_dsl.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.10.</b>
+                        
+                         Actor DSL
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="4" data-path="chapter4/futures_and_agents.html">
+            
+                
+                    <a href="../chapter4/futures_and_agents.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                         Futures与Agents
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="4.1" data-path="chapter4/01_futures.html">
+            
+                
+                    <a href="../chapter4/01_futures.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                         Futures
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="4.2" data-path="chapter4/02_agents.html">
+            
+                
+                    <a href="../chapter4/02_agents.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.2.</b>
+                        
+                         Agents
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="5" data-path="chapter5/networking.html">
+            
+                
+                    <a href="../chapter5/networking.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.</b>
+                        
+                         网络
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="5.1" data-path="chapter5/01_cluster_cpecification.html">
+            
+                
+                    <a href="../chapter5/01_cluster_cpecification.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.1.</b>
+                        
+                         集群规格
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="5.2" data-path="chapter5/02_cluster_usage.html">
+            
+                
+                    <a href="../chapter5/02_cluster_usage.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.2.</b>
+                        
+                         集群用法
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="5.3" data-path="chapter5/03_remoting.html">
+            
+                
+                    <a href="../chapter5/03_remoting.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.3.</b>
+                        
+                         远程
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="5.4" data-path="chapter5/04_serialization.html">
+            
+                
+                    <a href="../chapter5/04_serialization.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.4.</b>
+                        
+                         序列化
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="5.5" data-path="chapter5/05_io.html">
+            
+                
+                    <a href="../chapter5/05_io.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.5.</b>
+                        
+                         I/O
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="5.6" data-path="chapter5/06_using_tcp.html">
+            
+                
+                    <a href="../chapter5/06_using_tcp.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.6.</b>
+                        
+                         使用TCP
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="5.7" data-path="chapter5/07_using_udp.html">
+            
+                
+                    <a href="../chapter5/07_using_udp.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.7.</b>
+                        
+                         使用UDP
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="5.8" data-path="chapter5/08_zeromq.html">
+            
+                
+                    <a href="../chapter5/08_zeromq.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.8.</b>
+                        
+                         ZeroMQ
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="5.9" data-path="chapter5/09_camel.html">
+            
+                
+                    <a href="../chapter5/09_camel.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.9.</b>
+                        
+                         Camel
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="6" data-path="chapter6/utilities.html">
+            
+                
+                    <a href="../chapter6/utilities.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>6.</b>
+                        
+                         实用工具
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter active" data-level="6.1" data-path="chapter6/01_event_bus.html">
+            
+                
+                    <a href="../chapter6/01_event_bus.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>6.1.</b>
+                        
+                         事件总线
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="6.2" data-path="chapter6/02_logging.html">
+            
+                
+                    <a href="../chapter6/02_logging.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>6.2.</b>
+                        
+                         日志
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="6.3" data-path="chapter6/03_scheduler.html">
+            
+                
+                    <a href="../chapter6/03_scheduler.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>6.3.</b>
+                        
+                         调度器
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="6.4" data-path="chapter6/04_duration.html">
+            
+                
+                    <a href="../chapter6/04_duration.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>6.4.</b>
+                        
+                         Duration
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="6.5" data-path="chapter6/05_circuit_breaker.html">
+            
+                
+                    <a href="../chapter6/05_circuit_breaker.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>6.5.</b>
+                        
+                         线路断路器
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="6.6" data-path="chapter6/06_akka_extensions.html">
+            
+                
+                    <a href="../chapter6/06_akka_extensions.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>6.6.</b>
+                        
+                         Akka扩展
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="6.7" data-path="chapter6/07_microkernel.html">
+            
+                
+                    <a href="../chapter6/07_microkernel.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>6.7.</b>
+                        
+                         微内核
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="7" data-path="chapter7/howto_common_patterns.html">
+            
+                
+                    <a href="../chapter7/howto_common_patterns.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>7.</b>
+                        
+                         如何使用：常用模式
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="8" data-path="chapter8/experimental_modules.html">
+            
+                
+                    <a href="../chapter8/experimental_modules.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>8.</b>
+                        
+                         实验模块
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="8.1" data-path="chapter3/08_persistence.html">
+            
+                
+                    <a href="../chapter3/08_persistence.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>8.1.</b>
+                        
+                         持久化
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="8.2" data-path="chapter8/02_multi_node_testing.html">
+            
+                
+                    <a href="../chapter8/02_multi_node_testing.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>8.2.</b>
+                        
+                         多节点测试
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="8.3" data-path="chapter8/03_actors.html">
+            
+                
+                    <a href="../chapter8/03_actors.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>8.3.</b>
+                        
+                         Actors(使用Java的Lambda支持)
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="8.4" data-path="chapter8/04_fsm.html">
+            
+                
+                    <a href="../chapter8/04_fsm.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>8.4.</b>
+                        
+                         FSM(使用Java的Lambda支持)
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="8.5" data-path="chapter8/05_external_contributions.html">
+            
+                
+                    <a href="../chapter8/05_external_contributions.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>8.5.</b>
+                        
+                         外部贡献
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="9" data-path="chapter9/information_for_akka_developers.html">
+            
+                
+                    <a href="../chapter9/information_for_akka_developers.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>9.</b>
+                        
+                         Akka开发者信息
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="9.1" data-path="chapter9/01_building_akka.html">
+            
+                
+                    <a href="../chapter9/01_building_akka.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>9.1.</b>
+                        
+                         构建Akka
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="9.2" data-path="chapter9/02_multi_jvm_testing.html">
+            
+                
+                    <a href="../chapter9/02_multi_jvm_testing.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>9.2.</b>
+                        
+                         多JVM测试
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="9.3" data-path="chapter9/03_io_layer_design.html">
+            
+                
+                    <a href="../chapter9/03_io_layer_design.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>9.3.</b>
+                        
+                         I/O层设计
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="9.4" data-path="chapter9/04_developer_guidelines.html">
+            
+                
+                    <a href="../chapter9/04_developer_guidelines.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>9.4.</b>
+                        
+                         开发指南
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="9.5" data-path="chapter9/05_documentation_guidelines.html">
+            
+                
+                    <a href="../chapter9/05_documentation_guidelines.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>9.5.</b>
+                        
+                         文档指南
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="9.6" data-path="chapter9/06_team.html">
+            
+                
+                    <a href="../chapter9/06_team.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>9.6.</b>
+                        
+                         团队
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="10" data-path="chapter10/project_information.html">
+            
+                
+                    <a href="../chapter10/project_information.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>10.</b>
+                        
+                         工程信息
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="10.1" data-path="chapter10/01_migration_guides.html">
+            
+                
+                    <a href="../chapter10/01_migration_guides.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>10.1.</b>
+                        
+                         迁移指南
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="10.2" data-path="chapter10/02_issue_tracking.html">
+            
+                
+                    <a href="../chapter10/02_issue_tracking.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>10.2.</b>
+                        
+                         问题追踪
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="10.3" data-path="chapter10/03_licenses.html">
+            
+                
+                    <a href="../chapter10/03_licenses.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>10.3.</b>
+                        
+                         许可证
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="10.4" data-path="chapter10/04_sponsors.html">
+            
+                
+                    <a href="../chapter10/04_sponsors.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>10.4.</b>
+                        
+                         赞助商
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="10.5" data-path="chapter10/05_project.html">
+            
+                
+                    <a href="../chapter10/05_project.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>10.5.</b>
+                        
+                         项目
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="11" data-path="chapter11/additional_information.html">
+            
+                
+                    <a href="../chapter11/additional_information.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>11.</b>
+                        
+                         附加信息
+                    </a>
+                
+            
+            
+            <ul class="articles">
+                
+    
+        
+        <li class="chapter " data-level="11.1" data-path="chapter11/01_faq.html">
+            
+                
+                    <a href="../chapter11/01_faq.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>11.1.</b>
+                        
+                         常见问题
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="11.2" data-path="chapter11/02_books.html">
+            
+                
+                    <a href="../chapter11/02_books.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>11.2.</b>
+                        
+                         图书
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="11.3" data-path="chapter11/03_other_language_bindings.html">
+            
+                
+                    <a href="../chapter11/03_other_language_bindings.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>11.3.</b>
+                        
+                         其他语言绑定
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="11.4" data-path="chapter11/04_akka_in_osgi.html">
+            
+                
+                    <a href="../chapter11/04_akka_in_osgi.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>11.4.</b>
+                        
+                         Akka与OSGi
+                    </a>
+                
+            
+            
+        </li>
+    
+        
+        <li class="chapter " data-level="11.5" data-path="chapter11/05_incomplete_list_of_http_frameworks.html">
+            
+                
+                    <a href="../chapter11/05_incomplete_list_of_http_frameworks.html">
+                        <i class="fa fa-check"></i>
+                        
+                            <b>11.5.</b>
+                        
+                         部分HTTP框架名单
+                    </a>
+                
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+
+        
+        <li class="divider"></li>
+        <li>
+            <a href="http://www.gitbook.io/" target="blank" class="gitbook-link">Published using GitBook</a>
+        </li>
+        
+    </ul>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header">
+    <!-- Actions Left -->
+    <a href="#" class="btn pull-left toggle-summary" aria-label="Toggle summary"><i class="fa fa-align-justify"></i></a>
+    <a href="#" class="btn pull-left toggle-search" aria-label="Toggle search"><i class="fa fa-search"></i></a>
+    
+    <div id="font-settings-wrapper" class="dropdown pull-left">
+        <a href="#" class="btn toggle-dropdown" aria-label="Toggle font settings"><i class="fa fa-font"></i>
+        </a>
+        <div class="dropdown-menu font-settings">
+    <div class="dropdown-caret">
+        <span class="caret-outer"></span>
+        <span class="caret-inner"></span>
+    </div>
+
+    <div class="buttons">
+        <button type="button" id="reduce-font-size" class="button size-2">A</button>
+        <button type="button" id="enlarge-font-size" class="button size-2">A</button>
+    </div>
+
+    <div class="buttons font-family-list">
+        <button type="button" data-font="0" class="button">Serif</button>
+        <button type="button" data-font="1" class="button">Sans</button>
+    </div>
+
+    <div class="buttons color-theme-list">
+        <button type="button" id="color-theme-preview-0" class="button size-3" data-theme="0">White</button>
+        <button type="button" id="color-theme-preview-1" class="button size-3" data-theme="1">Sepia</button>
+        <button type="button" id="color-theme-preview-2" class="button size-3" data-theme="2">Night</button>
+    </div>
+</div>
+
+    </div>
+
+    <!-- Actions Right -->
+    
+    <div class="dropdown pull-right">
+        <a href="#" class="btn toggle-dropdown" aria-label="Toggle share dropdown"><i class="fa fa-share-alt"></i>
+        </a>
+        <div class="dropdown-menu font-settings dropdown-left">
+            <div class="dropdown-caret">
+                <span class="caret-outer"></span>
+                <span class="caret-inner"></span>
+            </div>
+            <div class="buttons">
+                <button type="button" data-sharing="twitter" class="button">Twitter</button>
+                <button type="button" data-sharing="google-plus" class="button">Google</button>
+                <button type="button" data-sharing="facebook" class="button">Facebook</button>
+                <button type="button" data-sharing="weibo" class="button">Weibo</button>
+                <button type="button" data-sharing="instapaper" class="button">Instapaper</button>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <a href="#" target="_blank" class="btn pull-right google-plus-sharing-link sharing-link" data-sharing="google-plus" aria-label="Share on Google Plus"><i class="fa fa-google-plus"></i></a>
+    
+    
+    <a href="#" target="_blank" class="btn pull-right facebook-sharing-link sharing-link" data-sharing="facebook" aria-label="Share on Facebook"><i class="fa fa-facebook"></i></a>
+    
+    
+    <a href="#" target="_blank" class="btn pull-right twitter-sharing-link sharing-link" data-sharing="twitter" aria-label="Share on Twitter"><i class="fa fa-twitter"></i></a>
+    
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../" >AKKA 2.3.6 Scala 文档</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-gitbook_58">
+                    
+                        <h1 id="">事件总线</h1>
+<blockquote>
+<p>注：本节未经校验，如有问题欢迎提issue</p>
+</blockquote>
+<p>最初设想是为了提供一种向多个actor群发消息的方法，之后<code>EventBus</code>被一般化为一组实现一个简单接口的可组合的特质:</p>
+<pre><code class="lang-scala"><span class="hljs-comment">/**
+ * Attempts to register the subscriber to the specified Classifier
+ * @return true if successful and false if not (because it was already
+ *   subscribed to that Classifier, or otherwise)
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">subscribe</span>(</span>subscriber: <span class="hljs-type">Subscriber</span>, to: <span class="hljs-type">Classifier</span>): <span class="hljs-type">Boolean</span>
+
+<span class="hljs-comment">/**
+ * Attempts to deregister the subscriber from the specified Classifier
+ * @return true if successful and false if not (because it wasn't subscribed
+ *   to that Classifier, or otherwise)
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">unsubscribe</span>(</span>subscriber: <span class="hljs-type">Subscriber</span>, from: <span class="hljs-type">Classifier</span>): <span class="hljs-type">Boolean</span>
+
+<span class="hljs-comment">/**
+ * Attempts to deregister the subscriber from all Classifiers it may be subscribed to
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">unsubscribe</span>(</span>subscriber: <span class="hljs-type">Subscriber</span>): <span class="hljs-type">Unit</span>
+
+<span class="hljs-comment">/**
+ * Publishes the specified Event to this bus
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">publish</span>(</span>event: <span class="hljs-type">Event</span>): <span class="hljs-type">Unit</span>
+</code></pre>
+<blockquote>
+<p>注意</p>
+<p>请注意 EventBus 不会保留发布消息的发件人。如果你需要原始发件人的引用必须在消息内部提供。</p>
+</blockquote>
+<p>这个机制在Akka的多个地方用到，例如<a href="#event-stream">事件流</a>. 具体实现可以使用下面列出的特定构建工具块。</p>
+<p>一个事件总线必须定义以下三种抽象类型：</p>
+<ul>
+<li><code>Event</code> 所有发布到该总线上的事件的类型</li>
+<li><code>Subscriber</code> 允许注册到该总线上的订阅者的类型</li>
+<li><code>Classifier</code> 定义用来派发消息时选择订阅者的分类器</li>
+</ul>
+<p>下面的 trait 在这些类型中仍然是泛化的，但它们必须在任何具体的实现中被定义。</p>
+<h3 id="classifiers">类别（Classifiers）</h3>
+<p>这里提到的类别是Akka发布包的一部分，如果没找到合适的就实现一个自己的类别，并不困难，到 [github]（<a href="http://github.com/akka/akka/tree/v2.3.6/akka-actor/src/main/scala/akka/event/EventBus.scala）" target="_blank">http://github.com/akka/akka/tree/v2.3.6/akka-actor/src/main/scala/akka/event/EventBus.scala）</a> 了解已有类别的实现。</p>
+<h5 id="">查找分类法</h5>
+<p>最简单的分类法是给每个事件提取一个随机的类别，并为每一种类别维护一组订阅者。这可以用在收音机上选台来类比。 <code>LookupClassification</code> trait 仍然是泛化的，抽象了如何比较订阅者，以及具体分类的方法。</p>
+<p>需要实现的方法如下:</p>
+<pre><code class="lang-scala"><span class="hljs-keyword">import</span> akka.event.<span class="hljs-type">EventBus</span>
+<span class="hljs-keyword">import</span> akka.event.<span class="hljs-type">LookupClassification</span>
+
+<span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MsgEnvelope</span>(</span>topic: <span class="hljs-type">String</span>, payload: <span class="hljs-type">Any</span>)
+
+<span class="hljs-comment">/**
+ * Publishes the payload of the MsgEnvelope when the topic of the
+ * MsgEnvelope equals the String specified when subscribing.
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LookupBusImpl</span> <span class="hljs-keyword"><span class="hljs-keyword">extends</span></span> <span class="hljs-title">EventBus</span> <span class="hljs-keyword"><span class="hljs-keyword">with</span></span> <span class="hljs-title">LookupClassification</span> {</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Event</span> =</span> <span class="hljs-type">MsgEnvelope</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Classifier</span> =</span> <span class="hljs-type">String</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Subscriber</span> =</span> <span class="hljs-type">ActorRef</span>
+
+  <span class="hljs-comment">// is used for extracting the classifier from the incoming events</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">classify</span>(</span>event: <span class="hljs-type">Event</span>): <span class="hljs-type">Classifier</span> = event.topic
+
+  <span class="hljs-comment">// will be invoked for each event for all subscribers which registered themselves</span>
+  <span class="hljs-comment">// for the event’s classifier</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">publish</span>(</span>event: <span class="hljs-type">Event</span>, subscriber: <span class="hljs-type">Subscriber</span>): <span class="hljs-type">Unit</span> = {
+    subscriber ! event.payload
+  }
+
+  <span class="hljs-comment">// must define a full order over the subscribers, expressed as expected from</span>
+  <span class="hljs-comment">// `java.lang.Comparable.compare`</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">compareSubscribers</span>(</span>a: <span class="hljs-type">Subscriber</span>, b: <span class="hljs-type">Subscriber</span>): <span class="hljs-type">Int</span> =
+    a.compareTo(b)
+
+  <span class="hljs-comment">// determines the initial size of the index data structure</span>
+  <span class="hljs-comment">// used internally (i.e. the expected number of different classifiers)</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">mapSize</span>:</span> <span class="hljs-type">Int</span> = <span class="hljs-number">128</span>
+
+}
+</code></pre>
+<p>对该实现的测试看上去像这样：</p>
+<pre><code class="lang-scala"><span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">lookupBus</span> =</span> <span class="hljs-keyword">new</span> <span class="hljs-type">LookupBusImpl</span>
+lookupBus.subscribe(testActor, <span class="hljs-string">"greetings"</span>)
+lookupBus.publish(<span class="hljs-type">MsgEnvelope</span>(<span class="hljs-string">"time"</span>, <span class="hljs-type">System</span>.currentTimeMillis()))
+lookupBus.publish(<span class="hljs-type">MsgEnvelope</span>(<span class="hljs-string">"greetings"</span>, <span class="hljs-string">"hello"</span>))
+expectMsg(<span class="hljs-string">"hello"</span>)
+</code></pre>
+<p>这种分类法在对某个特定事件没有任何订阅者时是高效的。</p>
+<h5 id="">子频道分类法</h5>
+<p>如果类别构成一个树形结构而且订阅可以不仅针对叶子结点，这种分类法可能是最合适的。 这可以类比成在安风格划分过的（多个）收音机频道中进行调台。 开发这种分类法是为了用在分类器正好是事件的JVM类，并且订阅者可能对订阅某个特定类的所有子类感兴趣的场合，但是它可以用在任何树形类别体系。</p>
+<p>需要实现的方法如下:</p>
+<pre><code class="lang-scala"><span class="hljs-keyword">import</span> akka.util.<span class="hljs-type">Subclassification</span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">StartsWithSubclassification</span> <span class="hljs-keyword"><span class="hljs-keyword">extends</span></span> <span class="hljs-title">Subclassification</span>[</span><span class="hljs-type">String</span>] {
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">isEqual</span>(</span>x: <span class="hljs-type">String</span>, y: <span class="hljs-type">String</span>): <span class="hljs-type">Boolean</span> =
+    x == y
+
+  <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">isSubclass</span>(</span>x: <span class="hljs-type">String</span>, y: <span class="hljs-type">String</span>): <span class="hljs-type">Boolean</span> =
+    x.startsWith(y)
+}
+
+<span class="hljs-keyword">import</span> akka.event.<span class="hljs-type">SubchannelClassification</span>
+
+<span class="hljs-comment">/**
+ * Publishes the payload of the MsgEnvelope when the topic of the
+ * MsgEnvelope starts with the String specified when subscribing.
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SubchannelBusImpl</span> <span class="hljs-keyword"><span class="hljs-keyword">extends</span></span> <span class="hljs-title">EventBus</span> <span class="hljs-keyword"><span class="hljs-keyword">with</span></span> <span class="hljs-title">SubchannelClassification</span> {</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Event</span> =</span> <span class="hljs-type">MsgEnvelope</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Classifier</span> =</span> <span class="hljs-type">String</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Subscriber</span> =</span> <span class="hljs-type">ActorRef</span>
+
+  <span class="hljs-comment">// Subclassification is an object providing `isEqual` and `isSubclass`</span>
+  <span class="hljs-comment">// to be consumed by the other methods of this classifier</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">subclassification</span>:</span> <span class="hljs-type">Subclassification</span>[<span class="hljs-type">Classifier</span>] =
+    <span class="hljs-keyword">new</span> <span class="hljs-type">StartsWithSubclassification</span>
+
+  <span class="hljs-comment">// is used for extracting the classifier from the incoming events</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">classify</span>(</span>event: <span class="hljs-type">Event</span>): <span class="hljs-type">Classifier</span> = event.topic
+
+  <span class="hljs-comment">// will be invoked for each event for all subscribers which registered</span>
+  <span class="hljs-comment">// themselves for the event’s classifier</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">publish</span>(</span>event: <span class="hljs-type">Event</span>, subscriber: <span class="hljs-type">Subscriber</span>): <span class="hljs-type">Unit</span> = {
+    subscriber ! event.payload
+  }
+}
+</code></pre>
+<p>对该实现的测试看上去像这样：</p>
+<pre><code class="lang-scala"><span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">subchannelBus</span> =</span> <span class="hljs-keyword">new</span> <span class="hljs-type">SubchannelBusImpl</span>
+subchannelBus.subscribe(testActor, <span class="hljs-string">"abc"</span>)
+subchannelBus.publish(<span class="hljs-type">MsgEnvelope</span>(<span class="hljs-string">"xyzabc"</span>, <span class="hljs-string">"x"</span>))
+subchannelBus.publish(<span class="hljs-type">MsgEnvelope</span>(<span class="hljs-string">"bcdef"</span>, <span class="hljs-string">"b"</span>))
+subchannelBus.publish(<span class="hljs-type">MsgEnvelope</span>(<span class="hljs-string">"abc"</span>, <span class="hljs-string">"c"</span>))
+expectMsg(<span class="hljs-string">"c"</span>)
+subchannelBus.publish(<span class="hljs-type">MsgEnvelope</span>(<span class="hljs-string">"abcdef"</span>, <span class="hljs-string">"d"</span>))
+expectMsg(<span class="hljs-string">"d"</span>)
+</code></pre>
+<p>这种分类法在某事件没有任何订阅者时也很高效，但它使用一个保守锁来对共内部的类别缓存进行同步，所以不适合订阅关系以很高的频率变化的场合（记住通过发送第一个消息来“打开”一个类别，也将需要重新检查所有之前的订阅）。</p>
+<h5 id="">扫描分类法</h5>
+<p>上一种分类法是为严格的树形多类别订阅设计的，而这个分类法是用在覆盖事件空间中可能互相重叠的非树形结构类别上的。 这可以比喻为有地理限制的（比如老旧的收音机信号传播方式）的（可能有多个）收音机频道之间进行调台。</p>
+<p>需要实现的方法如下:</p>
+<pre><code class="lang-scala"><span class="hljs-keyword">import</span> akka.event.<span class="hljs-type">ScanningClassification</span>
+
+<span class="hljs-comment">/**
+ * Publishes String messages with length less than or equal to the length
+ * specified when subscribing.
+ */</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ScanningBusImpl</span> <span class="hljs-keyword"><span class="hljs-keyword">extends</span></span> <span class="hljs-title">EventBus</span> <span class="hljs-keyword"><span class="hljs-keyword">with</span></span> <span class="hljs-title">ScanningClassification</span> {</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Event</span> =</span> <span class="hljs-type">String</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Classifier</span> =</span> <span class="hljs-type">Int</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Subscriber</span> =</span> <span class="hljs-type">ActorRef</span>
+
+  <span class="hljs-comment">// is needed for determining matching classifiers and storing them in an</span>
+  <span class="hljs-comment">// ordered collection</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">compareClassifiers</span>(</span>a: <span class="hljs-type">Classifier</span>, b: <span class="hljs-type">Classifier</span>): <span class="hljs-type">Int</span> =
+    <span class="hljs-keyword">if</span> (a &lt; b) -<span class="hljs-number">1</span> <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (a == b) <span class="hljs-number">0</span> <span class="hljs-keyword">else</span> <span class="hljs-number">1</span>
+
+  <span class="hljs-comment">// is needed for storing subscribers in an ordered collection</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">compareSubscribers</span>(</span>a: <span class="hljs-type">Subscriber</span>, b: <span class="hljs-type">Subscriber</span>): <span class="hljs-type">Int</span> =
+    a.compareTo(b)
+
+  <span class="hljs-comment">// determines whether a given classifier shall match a given event; it is invoked</span>
+  <span class="hljs-comment">// for each subscription for all received events, hence the name of the classifier</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">matches</span>(</span>classifier: <span class="hljs-type">Classifier</span>, event: <span class="hljs-type">Event</span>): <span class="hljs-type">Boolean</span> =
+    event.length &lt;= classifier
+
+  <span class="hljs-comment">// will be invoked for each event for all subscribers which registered themselves</span>
+  <span class="hljs-comment">// for a classifier matching this event</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">publish</span>(</span>event: <span class="hljs-type">Event</span>, subscriber: <span class="hljs-type">Subscriber</span>): <span class="hljs-type">Unit</span> = {
+    subscriber ! event
+  }
+}
+</code></pre>
+<p>对该实现的测试看上去像这样：</p>
+<pre><code class="lang-scala"><span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">scanningBus</span> =</span> <span class="hljs-keyword">new</span> <span class="hljs-type">ScanningBusImpl</span>
+scanningBus.subscribe(testActor, <span class="hljs-number">3</span>)
+scanningBus.publish(<span class="hljs-string">"xyzabc"</span>)
+scanningBus.publish(<span class="hljs-string">"ab"</span>)
+expectMsg(<span class="hljs-string">"ab"</span>)
+scanningBus.publish(<span class="hljs-string">"abc"</span>)
+expectMsg(<span class="hljs-string">"abc"</span>)
+</code></pre>
+<p>这种分类法耗费的时间总是与订阅关系的数量成正比，而与实际匹配的数量无关。</p>
+<h5 id="actor-">Actor 分类法</h5>
+<p>这种分类法原来是专门为实现 <a href="../chapter3/01_actors.html#deathwatch-scala">DeathWatch</a>开发的: 订阅者和类别都是 <code>ActorRef</code> 类型.</p>
+<p>需要实现的方法如下:</p>
+<pre><code class="lang-scala"><span class="hljs-keyword">import</span> akka.event.<span class="hljs-type">ActorEventBus</span>
+<span class="hljs-keyword">import</span> akka.event.<span class="hljs-type">ActorClassification</span>
+<span class="hljs-keyword">import</span> akka.event.<span class="hljs-type">ActorClassifier</span>
+
+<span class="hljs-keyword">case</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Notification</span>(</span>ref: <span class="hljs-type">ActorRef</span>, id: <span class="hljs-type">Int</span>)
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ActorBusImpl</span> <span class="hljs-keyword"><span class="hljs-keyword">extends</span></span> <span class="hljs-title">ActorEventBus</span> <span class="hljs-keyword"><span class="hljs-keyword">with</span></span> <span class="hljs-title">ActorClassifier</span> <span class="hljs-keyword"><span class="hljs-keyword">with</span></span> <span class="hljs-title">ActorClassification</span> {</span>
+  <span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Event</span> =</span> <span class="hljs-type">Notification</span>
+
+  <span class="hljs-comment">// is used for extracting the classifier from the incoming events</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">classify</span>(</span>event: <span class="hljs-type">Event</span>): <span class="hljs-type">ActorRef</span> = event.ref
+
+  <span class="hljs-comment">// determines the initial size of the index data structure</span>
+  <span class="hljs-comment">// used internally (i.e. the expected number of different classifiers)</span>
+  <span class="hljs-keyword">override</span> <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">mapSize</span>:</span> <span class="hljs-type">Int</span> = <span class="hljs-number">128</span>
+}
+</code></pre>
+<p>对该实现的测试看上去像这样：</p>
+<pre><code class="lang-scala"><span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">observer1</span> =</span> <span class="hljs-type">TestProbe</span>().ref
+<span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">observer2</span> =</span> <span class="hljs-type">TestProbe</span>().ref
+<span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">probe1</span> =</span> <span class="hljs-type">TestProbe</span>()
+<span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">probe2</span> =</span> <span class="hljs-type">TestProbe</span>()
+<span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">subscriber1</span> =</span> probe1.ref
+<span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">subscriber2</span> =</span> probe2.ref
+<span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">actorBus</span> =</span> <span class="hljs-keyword">new</span> <span class="hljs-type">ActorBusImpl</span>
+actorBus.subscribe(subscriber1, observer1)
+actorBus.subscribe(subscriber2, observer1)
+actorBus.subscribe(subscriber2, observer2)
+actorBus.publish(<span class="hljs-type">Notification</span>(observer1, <span class="hljs-number">100</span>))
+probe1.expectMsg(<span class="hljs-type">Notification</span>(observer1, <span class="hljs-number">100</span>))
+probe2.expectMsg(<span class="hljs-type">Notification</span>(observer1, <span class="hljs-number">100</span>))
+actorBus.publish(<span class="hljs-type">Notification</span>(observer2, <span class="hljs-number">101</span>))
+probe2.expectMsg(<span class="hljs-type">Notification</span>(observer2, <span class="hljs-number">101</span>))
+probe1.expectNoMsg(<span class="hljs-number">500.</span>millis)
+</code></pre>
+<p>这种分类器对事件类型仍然是泛化的，它在所有的场合下都是高效的。</p>
+<h3 id="a-nameevent-streama"><a name="event-stream"></a>事件流</h3>
+<p>事件流是每个actor系统的主事件总线：它用来携带 <a href="02_logging.html#logging-scala">日志消息</a> 和 <a href="#dead-letters">死信</a>，并且也可以被用户代码使用来达到其它目的。它使用 <a href="#subchannel-classification">子频道分类法</a> 使得可以向一组相关的频道进行注册 (就象 <code>RemoteLifeCycleMessage</code> 所用的那样). 以下例子演示了一个简单的订阅是如何工作的：</p>
+<pre><code class="lang-scala"><span class="hljs-keyword">import</span> akka.actor.{ <span class="hljs-type">Actor</span>, <span class="hljs-type">DeadLetter</span>, <span class="hljs-type">Props</span> }
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Listener</span> <span class="hljs-keyword"><span class="hljs-keyword">extends</span></span> <span class="hljs-title">Actor</span> {</span>
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">receive</span> =</span> {
+    <span class="hljs-keyword">case</span> d: <span class="hljs-type">DeadLetter</span> =&gt; println(d)
+  }
+}
+<span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">listener</span> =</span> system.actorOf(<span class="hljs-type">Props</span>(classOf[<span class="hljs-type">Listener</span>], <span class="hljs-keyword">this</span>))
+system.eventStream.subscribe(listener, classOf[<span class="hljs-type">DeadLetter</span>])
+</code></pre>
+<h5 id="">缺省的处理器</h5>
+<p>actor系统在启动时会创建一些actor，并为其在事件流上订阅日志消息：这些是缺省的处理器，可以配置在例如<code>application.conf</code>:</p>
+<pre><code>akka {
+  loggers = [&quot;akka.event.Logging$DefaultLogger&quot;]
+}
+</code></pre><p>这里以全路径类名列出的处理器将订阅所有配置的日志级别以上的日志事件类，并且当日志级别在运行时被修改时这些订阅关系也会同步修改:</p>
+<pre><code class="lang-scala">system.eventStream.setLogLevel(<span class="hljs-type">Logging</span>.<span class="hljs-type">DebugLevel</span>)
+</code></pre>
+<p>这意味着一个低于日志级别的日志事件，事实上根本不会被派发（除非专门为相应的事件类进行了手工订阅）</p>
+<h5 id="a-namedead-lettersa"><a name="dead-letters"></a>死信</h5>
+<p>正如 <a href="../chapter3/01_actors.html#stopping-actors-scala">终止actors</a>所述, 当actor终止后其邮箱队列中的剩余消息及后续被发送的消息都将被发送到死信邮箱， 它缺省情况下会发布打包在 <code>DeadLetter</code> 中的消息. 这种打包动作会保留被重定向消息的原始发送者、接收者以及消息内容。</p>
+<h5 id="">其它用处</h5>
+<p>事件流一直存在并可用，你可以向它发布你自己的事件 (它接受 <code>AnyRef</code>) 并对相应的JVM类添加订阅监听器。</p>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="../chapter6/utilities.html" class="navigation navigation-prev " aria-label="Previous page: 实用工具"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="../chapter6/02_logging.html" class="navigation navigation-next " aria-label="Next page: 日志"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="../gitbook/app.js"></script>
+
+    
+    <script src="https://cdn.mathjax.org/mathjax/2.4-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+    
+    <script src="../gitbook/plugins/gitbook-plugin-mathjax/plugin.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"fontSettings":{"theme":null,"family":"sans","size":2}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>
