@@ -1,0 +1,352 @@
+# 集群用法
+For introduction to the Akka Cluster concepts please see Cluster Specification.
+
+##5.2.1 Preparing Your Project for Clustering
+
+The Akka cluster is a separate jar file. Make sure that you have the following dependency in your project:
+
+```
+"com.typesafe.akka" %% "akka-cluster" % "2.4.1"
+```
+##5.2.2 A Simple Cluster Example
+
+The following configuration enables the Cluster extension to be used. It joins the cluster and an actor subscribes to cluster membership events and logs them. The application.conf configuration looks like this:
+
+```scala
+akka { 
+	actor {
+		provider = "akka.cluster.ClusterActorRefProvider" 
+	} 
+	remote { 
+		log-remote-lifecycle-events = off 
+		netty.tcp { 
+			hostname = "127.0.0.1" 
+			port = 0 
+		} 
+	}
+
+	cluster { 
+		seed-nodes = [ 
+		"akka.tcp://ClusterSystem@127.0.0.1:2551", 
+		"akka.tcp://ClusterSystem@127.0.0.1:2552"
+		]
+		auto-down-unreachable-after = 10s
+	}
+}
+
+# Disable legacy metrics in akka-cluster. akka.cluster.metrics.enabled=off
+
+# Enable metrics extension in akka-cluster-metrics. akka.extensions=["akka.cluster.metrics.ClusterMetricsExtension"]
+
+# Sigar native library extract location during tests. # Note: use per-jvm-instance folder when running multiple jvm on one host. akka.cluster.metrics.native-library-extract-folder=${user.dir}/target/native
+```
+To enable cluster capabilities in your Akka project you should, at a minimum, add the Remoting settings, but with `akka.cluster.ClusterActorRefProvider`. The akka.cluster.seed-nodes should normally also be added to your application.conf file.
+
+>Note: If you are using Docker or the nodes for some other reason have separate internal and external ip addresses you must configure remoting according to Remote configuration for NAT and Docker
+
+The seed nodes are configured contact points for initial, automatic, join of the cluster.
+
+Note that if you are going to start the nodes on different machines you need to specify the ip-addresses or host names of the machines in application.conf instead of 127.0.0.1
+
+An actor that uses the cluster extension may look like this:
+
+```scala
+package sample.cluster.simple
+
+import akka.cluster.Cluster 
+import akka.cluster.ClusterEvent._ 
+import akka.actor.ActorLogging 
+import akka.actor.Actor
+
+class SimpleClusterListener extends Actor with ActorLogging {
+
+	val cluster = Cluster(context.system)
+	
+	// subscribe to cluster changes, re-subscribe when restart 
+	override def preStart(): Unit = { 
+	//#subscribe 
+	cluster.subscribe(self, initialStateMode = InitialStateAsEvents, classOf[MemberEvent], classOf[UnreachableMember]) 
+	//#subscribe 
+	}
+	
+	override def postStop(): Unit = cluster.unsubscribe(self)
+	
+	def receive = { 
+		case MemberUp(member) =>
+			log.info("Member is Up: {}", member.address) 
+		case UnreachableMember(member) =>
+			log.info("Member detected as unreachable: {}", member) 
+		case MemberRemoved(member, previousStatus) => 
+			log.info("Member is Removed: {} after {}", member.address, previousStatus) 
+		case _: MemberEvent => // ignore
+	}
+}
+```
+
+The actor registers itself as subscriber of certain cluster events. It receives events corresponding to the current state of the cluster when the subscription starts and then it receives events for changes that happen in the cluster.
+
+The easiest way to run this example yourself is to download Typesafe Activator and open the tutorial named Akka Cluster Samples with Scala. It contains instructions of how to run the SimpleClusterApp.
+
+##5.2.3 Joining to Seed Nodes
+
+You may decide if joining to the cluster should be done manually or automatically to configured initial contact points, so-called seed nodes. When a new node is started it sends a message to all seed nodes and then sends join command to the one that answers first. If no one of the seed nodes replied (might not be started yet) it retries this procedure until successful or shutdown.
+
+You define the seed nodes in the Configuration file (application.conf):
+
+```
+akka.cluster.seed-nodes = [ "akka.tcp://ClusterSystem@host1:2552", "akka.tcp://ClusterSystem@host2:2552"]
+```
+This can also be defined as Java system properties when starting the JVM using the following syntax:
+
+```java
+-Dakka.cluster.seed-nodes.0=akka.tcp://ClusterSystem@host1:2552 
+-Dakka.cluster.seed-nodes.1=akka.tcp://ClusterSystem@host2:2552
+```
+The seed nodes can be started in any order and it is not necessary to have all seed nodes running, but the node configured as the first element in the seed-nodes configuration list must be started when initially starting a cluster, otherwise the other seed-nodes will not become initialized and no other node can join the cluster. The reason for the special first seed node is to avoid forming separated islands when starting from an empty cluster. It is quickest to start all configured seed nodes at the same time (order doesn’t matter), otherwise it can take up to the configured seed-node-timeout until the nodes can join.
+
+Once more than two seed nodes have been started it is no problem to shut down the first seed node. If the first seed node is restarted, it will first try to join the other seed nodes in the existing cluster.
+
+If you don’t configure seed nodes you need to join the cluster programmatically or manually.
+
+Manual joining can be performed by using ref:cluster_jmx_scala or Command Line Management. Joining pro- grammatically can be performed with Cluster(system).join. Unsuccessful join attempts are automatically retried after the time period defined in configuration property retry-unsuccessful-join-after. Retries can be disabled by setting the property to off.
+
+You can join to any node in the cluster. It does not have to be configured as a seed node. Note that you can only join to an existing cluster member, which means that for bootstrapping some node must join itself,and then the following nodes could join them to make up a cluster.
+
+You may also use Cluster(system).joinSeedNodes to join programmatically, which is attractive when dynamically discovering other nodes at startup by using some external tool or API. When using joinSeedNodes you should not include the node itself except for the node that is supposed to be the first seed node, and that should be placed first in parameter to joinSeedNodes.
+
+Unsuccessful attempts to contact seed nodes are automatically retried after the time period defined in configuration property seed-node-timeout. Unsuccessful attempt to join a specific seed node is automatically retried after the configured retry-unsuccessful-join-after. Retrying means that it tries to contact all seed nodes and then joins the node that answers first. The first node in the list of seed nodes will join itself if it cannot contact any of the other seed nodes within the configured seed-node-timeout.
+
+An actor system can only join a cluster once. Additional attempts will be ignored. When it has successfully joined it must be restarted to be able to join another cluster or to join the same cluster again.It can use the same host name and port after the restart, when it come up as new incarnation of existing member in the cluster, trying to join in, then the existing one will be removed from the cluster and then it will be allowed to join.
+
+##5.2.4 Automatic vs. Manual Downing
+
+When a member is considered by the failure detector to be unreachable the leader is not allowed to perform its duties, such as changing status of new joining members to ‘Up’. The node must first become reachable again, or the status of the unreachable member must be changed to ‘Down’. Changing status to ‘Down’ can be performed automatically or manually. By default it must be done manually, using JMX or Command Line Management.
+
+It can also be performed programmatically with Cluster(system).down(address).
+
+You can enable automatic downing with configuration:
+
+akka.cluster.auto-down-unreachable-after = 120s
+
+This means that the cluster leader member will change the unreachable node status to down automatically after the configured time of unreachability.
+
+Be aware of that using auto-down implies that two separate clusters will automatically be formed in case of network partition. That might be desired by some applications but not by others.
+
+Note: If you have auto-down enabled and the failure detector triggers, you can over time end up with a lot of single node clusters if you don’t put measures in place to shut down nodes that have become unreachable. This follows from the fact that the unreachable node will likely see the rest of the cluster as unreachable, become its own leader and form its own cluster.
+
+##5.2.5 Leaving
+
+There are two ways to remove a member from the cluster.
+
+You can just stop the actor system (or the JVM process). It will be detected as unreachable and removed after the automatic or manual downing as described above.
+
+A more graceful exit can be performed if you tell the cluster that a node shall leave. This can be performed using JMX or Command Line Management. It can also be performed programmatically with:
+
+```
+val cluster = Cluster(system) cluster.leave(cluster.selfAddress)
+```
+Note that this command can be issued to any member in the cluster, not necessarily the one that is leaving. The cluster extension, but not the actor system or JVM, of the leaving member will be shutdown after the leader has changed status of the member to Exiting. Thereafter the member will be removed from the cluster. Normally this is handled automatically, but in case of network failures during this process it might still be necessary to set the node’s status to Down in order to complete the removal.
+
+##5.2.6 WeaklyUp Members
+
+If a node is unreachable then gossip convergence is not possible and therefore any leader actions are also not possible. However, we still might want new nodes to join the cluster in this scenario.
+
+Warning: The WeaklyUp feature is marked as “experimental” as of its introduction in Akka 2.4.0. We will continue to improve this feature based on our users’ feedback, which implies that while we try to keep incompatible changes to a minimum the binary compatibility guarantee for maintenance releases does not apply this feature.
+
+This feature is disabled by default. With a configuration option you can allow this behavior:
+
+```
+akka.cluster.allow-weakly-up-members = on
+```
+When allow-weakly-up-members is enabled and there is no gossip convergence, Joining members will be promoted to WeaklyUp and they will become part of the cluster. Once gossip convergence is reached, the leader will move WeaklyUp members to Up.
+
+You can subscribe to the WeaklyUp membership event to make use of the members that are in this state, but you should be aware of that members on the other side of a network partition have no knowledge about the existence of the new members. You should for example not count WeaklyUp members in quorum decisions.
+
+Warning: This feature is only available from Akka 2.4.0 and cannot be used if some of your cluster members are running an older version of Akka.
+
+##5.2.7 Subscribe to Cluster Events
+
+You can subscribe notifications of the cluster membership by using to change `Cluster(system).subscribe`. 
+
+```scala
+cluster.subscribe(self, classOf[MemberEvent], classOf[UnreachableMember])
+```
+A snapshot of the full state, `akka.cluster.ClusterEvent.CurrentClusterState`, is sent to the subscriber as the first message, followed by events for incremental updates.
+
+Note that you may receive an empty CurrentClusterState, containing no members, if you start the sub- scription before the initial join procedure has completed. This is expected behavior. When the node has been accepted in the cluster you will receive MemberUp for that node, and other nodes.
+
+If you find it inconvenient to handle the `CurrentClusterState` you can use ClusterEvent.InitialStateAsEvents as parameter to subscribe. That means that instead of receiving CurrentClusterState as the first message you will receive the events corresponding to the current state to mimic what you would have seen if you were listening to the events when they occurred in the past. Note that those initial events only correspond to the current state and it is not the full history of all changes that actually has occurred in the cluster.
+
+```
+cluster.subscribe(self, initialStateMode = InitialStateAsEvents, classOf[MemberEvent], classOf[UnreachableMember])
+```
+
+The events to track the life-cycle of members are:
+
+• `ClusterEvent.MemberJoined` - A new member has joined the cluster and its status has been changed to Joining.
+
+• `ClusterEvent.MemberUp` - A new member has joined the cluster and its status has been changed to Up.
+
+• `ClusterEvent.MemberExited` - A member is leaving the cluster and its status has been changed to Exiting Note that the node might already have been shutdown when this event is published on another node.
+
+• `ClusterEvent.MemberRemoved` - Member completely removed from the cluster.
+
+• `ClusterEvent.UnreachableMember` - A member is considered as unreachable, detected by the failure detector of at least one other node.
+
+• `ClusterEvent.ReachableMember` - A member is considered as reachable again, after having been unreachable. All nodes that previously detected it as unreachable has detected it as reachable again.
+
+There are more types of change events, consult the API documentation of classes that extends `akka.cluster.ClusterEvent.ClusterDomainEvent` for details about the events.
+
+Instead of subscribing to cluster events it can sometimes be convenient to only get the full membership state with Cluster(system).state. Note that this state is not necessarily in sync with the events published to a cluster subscription.
+
+###Worker Dial-in Example
+
+Let’s take a look at an example that illustrates how workers, here named backend, can detect and register to new master nodes, here named frontend.
+
+The example application provides a service to transform text. When some text is sent to one of the frontend services, it will be delegated to one of the backend workers, which performs the transformation job, and sends the result back to the original client. New backend nodes, as well as new frontend nodes, can be added or removed to the cluster dynamically.
+
+Messages:
+
+```scala
+final case class TransformationJob(text: String) 
+final case class TransformationResult(text: String) 
+final case class JobFailed(reason: String, job: TransformationJob) 
+case object BackendRegistration
+```
+The backend worker that performs the transformation job:
+
+```scala
+class TransformationBackend extends Actor {
+
+val cluster = Cluster(context.system)
+
+// subscribe to cluster changes, MemberUp 
+// re-subscribe when restart 
+override def preStart(): Unit = cluster.subscribe(self, classOf[MemberUp]) 
+override def postStop(): Unit = cluster.unsubscribe(self)
+
+def receive = { 
+	case TransformationJob(text) => 
+		sender() ! TransformationResult(text.toUpperCase) 
+	case state: CurrentClusterState =>
+		state.members.filter(_.status == MemberStatus.Up) foreach register 	case MemberUp(m) => register(m) }
+
+def register(member: Member): Unit = 
+	if (member.hasRole("frontend"))
+		context.actorSelection(RootActorPath(member.address) / "user" / "frontend") ! BackendRegistration
+}
+```
+Note that the TransformationBackend actor subscribes to cluster events to detect new, potential, frontend nodes, and send them a registration message so that they know that they can use the backend worker.
+
+The frontend that receives user jobs and delegates to one of the registered backend workers:
+
+```scala
+class TransformationFrontend extends Actor {
+	var backends = IndexedSeq.empty[ActorRef] 
+	var jobCounter = 0
+	
+	def receive = { 
+		case job: TransformationJob if backends.isEmpty => sender() ! JobFailed("Service unavailable, try again later", job)
+		case job: TransformationJob => jobCounter += 1 backends(jobCounter % backends.size) forward job
+		case BackendRegistration if !backends.contains(sender()) => context watch sender() backends = backends :+ sender()
+		case Terminated(a) => backends = backends.filterNot(_ == a)
+	}
+}
+```
+Note that the TransformationFrontend actor watch the registered backend to be able to remove it from its list of available backend workers. Death watch uses the cluster failure detector for nodes in the cluster, i.e. it detects network failures and JVM crashes, in addition to graceful termination of watched actor. Death watch generates the Terminated message to the watching actor when the unreachable cluster node has been downed and removed.
+
+The Typesafe Activator tutorial named Akka Cluster Samples with Scala. contains the full source code and instructions of how to run the Worker Dial-in Example.
+
+##5.2.8 Node Roles
+
+Not all nodes of a cluster need to perform the same function: there might be one sub-set which runs the web front-end, one which runs the data access layer and one for the number-crunching. Deployment of actors—for example by cluster-aware routers—can take node roles into account to achieve this distribution of responsibilities.
+
+The roles of a node is defined in the configuration property named akka.cluster.roles and it is typically defined in the start script as a system property or environment variable.
+
+The roles of the nodes is part of the membership information in MemberEvent that you can subscribe to.
+
+##5.2.9 How To Startup when Cluster Size Reached
+
+A common use case is to start actors after the cluster has been initialized, members have joined, and the cluster has reached a certain size.
+
+With a configuration option you can define required number of members before the leader changes member status of ‘Joining’ members to ‘Up’.
+
+akka.cluster.min-nr-of-members = 3
+
+In a similar way you can define required number of members of a certain role before the leader changes member status of ‘Joining’ members to ‘Up’.
+
+akka.cluster.role { frontend.min-nr-of-members = 1 backend.min-nr-of-members = 2 }
+
+You can start the actors in a registerOnMemberUp callback, which will be invoked when the current member status is changed to ‘Up’, i.e. the cluster has at least the defined number of members.
+
+Cluster(system) registerOnMemberUp { system.actorOf(Props(classOf[FactorialFrontend], upToN, true), name = "factorialFrontend") }
+
+This callback can be used for other things than starting actors.
+
+##5.2.10 How To Cleanup when Member is Removed
+
+You can do some clean up in a registerOnMemberRemoved callback, which will be invoked when the current member status is changed to ‘Removed’ or the cluster have been shutdown.
+
+For example, this is how to shut down the ActorSystem and thereafter exit the JVM:
+
+```scala
+Cluster(system).registerOnMemberRemoved { 
+// exit JVM when ActorSystem has been terminated 
+system.registerOnTermination(System.exit(0)) 
+// shut down ActorSystem 
+system.terminate()
+
+// In case ActorSystem shutdown takes longer than 10 seconds, 
+// exit the JVM forcefully anyway. 
+// We must spawn a separate thread to not block current thread, 
+// since that would have blocked the shutdown of the ActorSystem. 
+new Thread { 
+	override def run(): Unit = { 
+		if (Try(Await.ready(system.whenTerminated, 10.seconds)).isFailure) 		System.exit(-1) } 
+}.start()
+}
+```
+>Note: Register a OnMemberRemoved callback on a cluster that have been shutdown, the callback will be invoked immediately on the caller thread, otherwise it will be invoked later when the current member status changed to ‘Removed’. You may want to install some cleanup handling after the cluster was started up, but the cluster might already be shutting down when you installing, and depending on the race is not healthy.
+
+##5.2.11 Cluster Singleton
+
+For some use cases it is convenient and sometimes also mandatory to ensure that you have exactly one actor of a certain type running somewhere in the cluster.
+
+This can be implemented by subscribing to member events, but there are several corner cases to consider. There- fore, this specific use case is made easily accessible by the Cluster Singleton.
+
+##5.2.12 Cluster Sharding
+
+Distributes actors across several nodes in the cluster and supports interaction with the actors using their logical identifier, but without having to care about their physical location in the cluster.
+
+See Cluster Sharding
+
+##5.2.13 Distributed Publish Subscribe
+
+Publish-subscribe messaging between actors in the cluster, and point-to-point messaging using the logical path of the actors, i.e. the sender does not have to know on which node the destination actor is running.
+
+See Distributed Publish Subscribe in Cluster.
+
+##5.2.14 Cluster Client
+
+Communication from an actor system that is not part of the cluster to actors running somewhere in the cluster. The client does not have to know on which node the destination actor is running.
+
+See Cluster Client.
+
+###Cluster Dispatcher
+
+Under the hood the cluster extension is implemented with actors and it can be necessary to create a bulkhead for those actors to avoid disturbance from other actors. Especially the heartbeating actors that is used for failure detection can generate false positives if they are not given a chance to run at regular intervals. For this purpose you can define a separate dispatcher to be used for the cluster actors:
+
+```
+akka.cluster.use-dispatcher = cluster-dispatcher
+
+cluster-dispatcher { 
+	type = "Dispatcher" 
+	executor = "fork-join-executor" 
+	fork-join-executor { 
+		parallelism-min = 2 
+		parallelism-max = 4 
+	} 
+}
+```
+
+
