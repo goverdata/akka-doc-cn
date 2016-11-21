@@ -1,3 +1,4 @@
+[TOC]
 # Actors
 
 [Actor模型](http://en.wikipedia.org/wiki/Actor_model)为编写并发和分布式系统提供了一种更高的抽象级别。它将开发人员从显式地处理锁和线程管理的工作中解脱出来，使编写并发和并行系统更加容易。Actor模型是在1973年Carl Hewitt的论文中定义的，不过直到被Erlang语言采用后才变得流行起来，一个成功案例是爱立信使用Erlang非常成功地创建了高并发的可靠的电信系统。
@@ -36,7 +37,7 @@ sender, recipient)``被发布到Actor系统（`ActorSystem`）的事件流（`Ev
 
 `receive`方法的结果是一个偏函数对象，它存储在actor中作为其"最初的行为"，对actor构造完成后改变行为的进一步信息，请参阅[Become/Unbecome](#actor-hotswap)。
 
-#####<a name="props"></a>Props
+##### <a name="props"></a>Props
 `Props`是一个用来在创建actor时指定选项的配置类，可以把它看作是不可变的，因此在创建包含相关部署信息的actor时（例如使用哪一个调度器(dispatcher)，详见下文），是可以自由共享的。以下是如何创建`Props`实例的示例.
 
 ```scala
@@ -51,7 +52,7 @@ val props3 = Props(classOf[ActorWithArgs], "arg")
 
 最后一行展示了一种可能性，它在不关注上下文的情况下传递构造函数参数。在构造`Props`对象的时候，会检查是否存在匹配的构造函数，如果没有或存在多个匹配的构造函数，则会导致`IllegalArgumentEception`。
 
-#####危险的变量
+##### 危险的变量
 
 ```scala
 // 不建议在另一个actor内使用:
@@ -67,7 +68,7 @@ val props7 = Props(new MyActor)
 
 > 在另一个actor中声明一个actor是非常危险的，会打破actor的封装。永远不要将一个actor的``this``引用传进`Props`！
 
-#####推荐做法
+##### 推荐做法
 在每一个`Actor`的伴生对象中提供工厂方法是一个好主意，这有助于保持创建合适的`Props`，尽可能接近actor的定义。这也避免了使用``Props.apply(...)``方法将采用一个“按名”（by-name）参数的缺陷，因为伴生对象的给定代码块中将不会保留包含作用域的引用：
 
 ```scala
@@ -94,7 +95,7 @@ class SomeOtherActor extends Actor {
 }
 ```
 
-#####使用Props创建Actor
+##### 使用Props创建Actor
 Actor可以通过将`Props`实例传入`actorOf`工厂方法来创建，`ActorSystem`和`ActorContext`中都有该方法。
 
 ```scala
@@ -122,7 +123,7 @@ class FirstActor extends Actor {
 
 actor在创建时，会自动异步启动。
 
-#####依赖注入
+##### 依赖注入
 如果你的actor有带参数的构造函数，则这些参数也需要成为`Props`的一部分，如[上文](#props)所述。但有些情况下必须使用工厂方法，例如，当实际构造函数的参数由依赖注入框架决定。
 
 ```scala
@@ -149,7 +150,7 @@ val actorRef = system.actorOf(
 
 关于依赖注入极其Akka集成的更多内容情参见[“在Akka中使用依赖注入”](http://letitcrash.com/post/55958814293/akka-dependency-injection)指南和Typesafe Activator的[“Akka Java Spring”](http://www.typesafe.com/activator/template/akka-java-spring)教程。
 
-#####收件箱
+##### 收件箱
 当在actor外编写与actor交互的代码时，``ask``模式可以作为一个解决方案（见下文），但有两件事它不能做：接收多个答复（例如将`ActorRef`订阅到一个通知服务）和查看其他actor的生命周期。为达到这些目的可以使用`Inbox`类：
 
 ```scala
@@ -166,7 +167,7 @@ val i = inbox()
 i watch target
 ```
 
-###Actor API
+### Actor API
 `Actor` trait只定义了一个抽象方法，就是上面提到的`receive`，用来实现actor的行为。
 
 如果当前actor的行为与收到的消息不匹配，则会调用 `unhandled`，其缺省实现是向actor系统的事件流中发布一条``akka.actor.UnhandledMessage(message, sender, recipient)``（将配置项`akka.actor.debug.unhandled`设置为``on``来将它们转换为实际的调试消息）。
@@ -222,7 +223,8 @@ def postRestart(reason: Throwable): Unit = {
 以上代码所示的是`Actor` trait的缺省实现。
 
 <span id="actor-lifecycle-scala"></span>
-###Actor生命周期
+
+### Actor生命周期
 
 ![](../images/actor_lifecycle.png)
 
@@ -235,7 +237,7 @@ actor系统中的路径代表一个"地方"，这里可能会被活着的actor�
 相对地，`ActorSelection`指向路径（或多个路径，如果使用了通配符），且完全不关注有没有化身占据它。因此`ActorSelection` 不能被监视。获取某路径下的当前化身``ActorRef``是可能的，只要向该``ActorSelection``发送``Identify``，如果收到``ActorIdentity``回应，则正确的引用就包含其中（详见[通过Actor Selection确定Actor](#actorSelection-scala)）。也可以使用`ActorSelection`的``resolveOne``方法，它会返回一个包含匹配`ActorRef`的``Future``。
 
 <span id="deathwatch-scala"></span>
-#####使用DeathWatch进行生命周期监控
+##### 使用DeathWatch进行生命周期监控
 为了在其它actor终止时 (即永久停止，而不是临时的失败和重启)收到通知，actor可以将自己注册为其它actor在终止时所发布的`Terminated`消息的接收者（见[停止 Actor](#stopping-actors-scala)）。这个服务是由actor系统的`DeathWatch`组件提供的。
 
 注册一个监视器很简单：
@@ -292,11 +294,11 @@ actor的重启只会替换掉原来的actor对象；重启不影响邮箱的内�
 > 要知道失败通知与用户消息的相关顺序不是决定性的。尤其是，在失败以前收到的最后一条消息被处理之前，父节点可能已经重启其子节点了。详细信息请参见[“讨论：消息顺序”](../chapter2/08_message_delivery_reliability.md#message-ordering)。
 
 <span id="stop-hook-scala"></span>
-#####终止 Hook
+##### 终止 Hook
 一个Actor终止后，其`postStop` hook将被调用，它可以用来，例如取消该actor在其它服务中的注册。这个hook保证在该actor的消息队列被禁止后才运行，即之后发给该actor的消息将被重定向到`ActorSystem`的`deadLetters`中。
 
 <span id="actorSelection-scala"></span>
-###通过Actor Selection定位Actor
+### 通过Actor Selection定位Actor
 如[Actor引用, 路径与地址](../chapter2/05_actor_references_paths_and_addresses.md)中所述，每个actor都拥有一个唯一的逻辑路径，此路径是由从actor系统的根开始的父子链构成；它还拥有一个物理路径，如果监管链包含有远程监管者，此路径可能会与逻辑路径不同。这些路径用来在系统中查找actor，例如，当收到一个远程消息时查找收件者，但是它们更直接的用处在于：actor可以通过指定绝对或相对路径（逻辑的或物理的）来查找其它的actor，并随结果获取一个`ActorSelection`：
 
 ```scala
@@ -836,3 +838,5 @@ def initialized: Receive = {
 > 警告
 
 > 此模式应小心使用，并且仅当上述模式都不适用时才应用。其潜在的问题之一是当发送到远程的actor时，消息可能会丢失。此外，发布一个处于未初始化状态的``ActorRef``可能会导致竞态条件，即在初始化完成前它接收到一个用户消息。
+
+

@@ -93,8 +93,11 @@ You may decide if joining to the cluster should be done manually or automaticall
 
 You define the seed nodes in the Configuration file (application.conf):
 
-```
-akka.cluster.seed-nodes = [ "akka.tcp://ClusterSystem@host1:2552", "akka.tcp://ClusterSystem@host2:2552"]
+```akka
+akka.cluster.seed-nodes = [ 
+	"akka.tcp://ClusterSystem@host1:2552", 
+	"akka.tcp://ClusterSystem@host2:2552"
+]
 ```
 This can also be defined as Java system properties when starting the JVM using the following syntax:
 

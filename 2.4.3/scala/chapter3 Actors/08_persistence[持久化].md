@@ -1,26 +1,28 @@
+[TOC]
+
 # 持久化
 
 Akka持久化使有状态的actor能留存其内部状态，以便在因JVM崩溃、监管者引起，或在集群中迁移导致的actor启动、重启时恢复它。Akka持久化背后的关键概念是持久化的只是一个actor的内部状态的的变化，而不是直接持久化其当前状态 （除了可选的快照）。这些更改永远只能被附加到存储，没什么是可变的，这使得高事务处理率和高效复制成为可能。有状态actor通过重放保存的变化来恢复，从而使它们可以重建其内部状态。重放的可以是完整历史记录，或着从某一个快照开始从而可以大大减少恢复时间。Akka持久化也提供了“至少一次消息传递语义”的点对点通信。
 
 > 注意
 
-> 本模块被标记为**“experimental”**直到Akka 2.3.0引入它。我们将基于用户的反馈继续改善此API，这就意味着我们对维护版本的二进制不兼容性降到最低的保证不适用于``akka.persistence``包的内容。
+> 在Akka 2.3.0之前,本模块都被标记为**“experimental(实验性的)”**。我们将基于用户的反馈继续改善此API，这就意味着我们对维护版本的二进制不兼容性降到最低的保证不适用于``akka.persistence``包的内容。
 
 Akka持久化受[eventsourced](https://github.com/eligosource/eventsourced)启发，并且是其正式的替代者。它遵循[eventsourced](https://github.com/eligosource/eventsourced)相同的概念和体系结构，但在API和实现层上则显著不同。又见[《迁移指南：从Eventsourced到Akka Persistence 2.3》](http://doc.akka.io/docs/akka/2.3.6/project/migration-guide-eventsourced-2.3.x.html#migration-eventsourced-2-3)。
 
-###Akka 2.3.4的变化
+### Akka 2.3.4的变化
 在Akka 2.3.4中，较早版本中的几个概念被推倒和简化。大体上讲；``Processor``和``EventsourcedProcessor``被替换为``PersistentActor``。``Channel``和``PersistentChannel``被替换为``AtLeastOnceDelivery``。``View``被替换为``PersistentView``。
 
 更改的全部细节请参阅[《迁移指南：从Akka Persistence (experimental) 2.3.3到Akka Persistence 2.3.4 (和2.4.x)》](http://doc.akka.io/docs/akka/2.3.6/project/migration-guide-persistence-experimental-2.3.x-2.4.x.html#migration-guide-persistence-experimental-2-3-x-2-4-x)。老的类在一段时间内仍被包含并标记为废弃，以便用户顺利过渡。如果你需要的旧的文档，可以参考[这里](http://doc.akka.io/docs/akka/2.3.3/scala/persistence.html)。
 
-###依赖
+### 依赖
 Akka持久化是一个单独的jar文件。请确保你的项目中有以下依赖关系：
 
 ```
 "com.typesafe.akka" %% "akka-persistence-experimental" % "2.3.6"
 ```
 
-###体系结构
+### 体系结构
 
 * *PersistentActor*：是一个持久的、有状态的actor。它能够持久化消息到一个日志，并以线程安全的方式对它们作出响应。它是可被用于执行*命令[command]*和*事件来源[event sourced]*的actor。当一个持久化的actor被启动或重新启动时，该actor会被重播日志消息，从而可以从这些消息恢复内部状态。
 * *PersistentView*：一个视图是一个持久的、有状态的actor，来接收已经由另一个持久化actor写下的日志消息。视图本身并没有新的日志消息，相反，它只能从一个持久化actor复制消息流来更新内部状态。
@@ -28,7 +30,7 @@ Akka持久化是一个单独的jar文件。请确保你的项目中有以下依�
 * *Journal*：日志存储发送到一个持久化actor的消息序列。应用程序可以控制actor接收的消息中，哪些需要在日记中记录，哪些不需要。日志的存储后端是可插拔的。默认日志存储插件是写入本地文件系统，复制日志在[社区插件](http://akka.io/community/)中可以获得。
 * *Snapshot store*：快照存储区持久化一个持久化actor或一个视图的内部状态的快照。快照可用于优化恢复时间。快照存储区的存储后端是可插拔的。默认快照存储插件写入本地文件系统。
 
-###<a name="Event_sourcing"></a>事件来源 Event sourcing
+### 事件来源 Event sourcing
 
 [事件来源](http://martinfowler.com/eaaDev/EventSourcing.html)背后的基本思想很简单。一个持久化actor接收一个 (非持久化) 命令，它首先会被验证是否可以被应用到当前状态。在这里，验证可以意味着任何东西，例如从对命令消息字段的简单检查，到引用若干外部服务。如果验证成功，从该命令生成事件，表示命令的效果。然后这些事件被持久化，在成功的持久化后，用于改变actor的状态。当持久化actor需要恢复时，仅重播持久化的事件，因为我们知道他们可以被成功地应用。换句话说，与命令不同，被重播到一个持久化actor的事件不能失败。事件来源的actor当然也可以处理不改变应用程序状态的命令，例如查询命令。
 
@@ -93,19 +95,20 @@ class ExamplePersistentActor extends PersistentActor {
 
 > 还有可能在正常处理过程中使用不同的命令处理程序，并使用``context.become()``和``context.unbecome()``来恢复。恢复后使actor进入相同的状态，你需要特别谨慎地使用``receiveRecover``方法中的``become``和``unbecome``进行相同的状态转换，就像你会在命令处理程序中做的一样。
 
-#####标识符
+##### 标识符
 一个持久化actor必须具有跨不同actor化身而不改变的标识符。必须使用``persistenceId``方法定义该标识符。
 
 ```scala
 override def persistenceId = "my-stable-persistence-id"
 ```
 
-#####<a name="recovery"/>恢复
-默认情况下，一个持久化actor通过在启动和重启时重放日志消息实现自动恢复。恢复过程中发送给持久化actor的新消息不会干扰重放消息。新消息只会在持久化actor恢复完成后被收到。
+##### Recovery 恢复
+>默认情况下，一个持久化actor通过在启动和重启时重放日志消息实现自动恢复。
 
-######自定义恢复
+恢复过程中发送给持久化actor的新消息不会干扰重放消息。**新消息只会在持久化actor恢复完成后被收到。**
+
+###### 自定义恢复
 通过使用空实现重写``preStart``，可以禁用启动时的自动恢复。
-
 
 ```scala
 override def preStart() = ()
@@ -159,7 +162,7 @@ def recoveryCompleted(): Unit = {
 }
 ```
 
-#####放宽的局部一致性要求和高吞吐量的用例
+##### 放宽的局部一致性要求和高吞吐量的用例
 
 如果面临放宽的局部一致性要求和高吞吐量，有时``PersistentActor``及其``persist``在处理大量涌入的命令时可能会不够，因为它必须等待知道给定命令相关的所有事件都处理完成后，才开始处理下一条命令。虽然这种抽象在大多数的情况下非常有用，有时你可能会放宽一致性要求——例如你会想要尽可能快速地处理命令，假设事件最终会持久化并在后台恰当处理，并在需要时追溯性地回应持久性故障。
 
@@ -202,12 +205,11 @@ processor ! "b"
 
 > 为了实现"*命令源*"模式，只需对所有传入消息马上调用``persistAsync(cmd)(...)``，并在回调中处理它们。
 
-
 > 警告
 
 > 如果在调用``persistAsync``和日志确定写操作之间，actor被重启（或停止）时，将不会调用回调。
 
-#####推迟行动，直到持久化处理程序已执行
+##### 推迟行动，直到持久化处理程序已执行
 
 使用``persistAsync``时，有时你会发现定义一些''在``persistAsync``处理程序调用之后发生''的行动是很好的。``PersistentActor``提供了一个工具方法``defer``，它类似于``persistAsync``，可是并不持久化过去的事件。推荐它用于*读取*的操作，和在你的域模型中没有相应事件的行动。
 
@@ -256,7 +258,7 @@ processor ! "b"
 
 > 如果该actor在调用``defer``和日志处理与确认所有写入之间的回调，将不会在actor重启（或停止）时调用。
 
-#####批处理写操作
+##### 批处理写操作
 为了优化吞吐量，一个持久化actor在高负荷下，会内部将一批事件先储存，然后再（作为一个批处理）写到日志中。批处理大小可以调整，从低和中等载荷作用下的1，动态增长到高负荷下可配置的最大大小（默认为``200``）。在使用``persistAsync``时，这极大地增加了最大吞吐量。
 
 ```
@@ -267,12 +269,12 @@ akka.persistence.journal.max-message-batch-size = 200
 
 批处理也在内部使用确保事件写操作的原子性。在单个命令上下文中的所有事件将作为单个批处理写入到日志中（即使在一个命令中多次调用``persist``）。因此，``PersistentActor``的恢复将永远不会部分完成 （只持久化单个命令中事件的一个子集）。
 
-#####删除邮件
+##### 删除邮件
 若要删除所有消息（由一个持久化actor记录) 到指定的序列号，持久化actor可以调用``deleteMessages``方法。
 
 一个可选的``permanent``参数指定是否应从日志中永久删除消息，或仅标记为已删除。在这两种情况下，消息都不会重播。Akka持久化以后的扩展将允许重播标记为已删除的消息，例如可用于调试。
 
-###持久化视图
+### 持久化视图
 
 持久化视图可以通过扩展``PersistentView``特质以及实现``receive``和``persistenceId``方法实现。
 
@@ -294,7 +296,7 @@ class MyView extends PersistentView {
 
 可以确定一条消息是从日志中发送，还是由用户定义的另一个调用``isPersistent``方法的actor发送。尽管有这样的功能，很多时候你根本不需要此信息，并可以简单地将相同的逻辑应用于这两种情况（跳过``if isPersistent``检查）。
 
-#####更新
+##### 更新
 actor系统的所有视图的默认更新间隔是可配置的：
 
 ```
@@ -318,15 +320,15 @@ akka.persistence.view.auto-update = off
 
 实现类可以通过重载``autoUpdate``方法重写配置的默认值。若要限制的每个更新请求的重播消息数量，应用程序可以配置自定义的``akka.persistence.view.auto-update-replay-max``值或重载``autoUpdateReplayMax``方法。手动更新的重播消息数目可以通过``Update``消息的``replayMax``参数进行限制。
 
-#####恢复
+##### 恢复
 持久化视图的初始化恢复过程和持久化actor的工作方式相同（即通过发送一个``Recover``消息到自己）。初始化恢复的最大重放消息数由``autoUpdateReplayMax``确定。关于自定义初始化恢复更多的可能性参见[恢复](#recovery)一节。
 
-#####标识符
+##### 标识符
 一个持久化视图必须具有跨不同actor化身而不改变的标识符。必须使用``viewId``方法定义该标识符。
 
 ``ViewId``必须不同于引用的``persistenceId``，除非[快照](#snapshots)视图和其持久化actor是共享的（即应用程序通常不需要做的东西）。
 
-###<a name="snapshots"/>快照
+### 快照
 
 快照可以大幅减少持久化actor和视图的恢复时间。下面讨论的快照内容是基于持久化actor的上下文，但这也同样适用于持久化视图。
 
